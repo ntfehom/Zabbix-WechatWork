@@ -10,12 +10,14 @@ def HandleUserSendTxt(text:str,UserID):
     HelpContent='以下为帮助信息：\n发送“ack+空格+故障ID+空格+回复内容”可确认问题，并发送消息给所有跟故障有关的人员（回复内容超过245个字将会被截断，只显示前245个字）\n例: ack 3773316 请XXX立即处理该问题\n'+\
         '发送“info+空格+主机名”可获取主机的硬件信息(主机名可在Zabbix中查询)\n例： info 网站中间件\n发送“帮助”或“help”获取帮助信息'
     # 使用正则表达式去除多个空格
-    PatternHandleMutipleBlanks= re.compile(r'  +')
+    PatternHandleMutipleBlanks= re.compile(r'\s\s+')
     text = re.sub(PatternHandleMutipleBlanks, ' ', text)
+    #去除开头可能出现的一个空格
+    text=text.strip(' ')
     # flags=re.I表示不区分大小写
     PatternAck= re.compile(r'ack',flags=re.I)
     PatternInfo= re.compile(r'info',flags=re.I)
-    PatternMatchBlank = re.compile(r' ')
+    PatternMatchBlank = re.compile(r'\s')
     PatternMatchHelpA = re.compile(r'help',flags=re.I)
     PatternMatchHelpB = re.compile(r'帮助')
     # 检测ack

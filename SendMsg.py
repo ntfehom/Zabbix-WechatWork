@@ -15,7 +15,6 @@ def SendCardMessageByTaskCardToApp(UserId,Subject,Message,task_id):
     GetResponse = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid="+CorpID+"&corpsecret="+CorpSecret,proxies=proxy).json()
     access_token = (GetResponse['access_token'])
     FormedArray = Message.split('---')
-    print(FormedArray)
     FormedArray[0] = "发生时间：" + FormedArray[0] + ' '
     FormedArray[1] = "on " + FormedArray[1] + '\n'
     FormedArray[2] = "故障名：" + FormedArray[2] + '\n'
