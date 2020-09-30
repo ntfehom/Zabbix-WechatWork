@@ -21,7 +21,7 @@ def HandleUserSendTxt(text:str,UserID):
         ReplyToAllInvolved(ReplyContent, EventID, username)
         return 0
     elif CheckInfo is not None:
-        (HostName)=CheckInfo.groups()
+        HostName=CheckInfo.groups()[0]
         RawData = '以下是主机的硬件信息：\n'
         RawData = RawData + GetHostInventoryFromHostName(HostName)
         return (RawData)
