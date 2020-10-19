@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 # coding:utf-8
+
+"""
+该文件为Zabbix系统的告警脚本
+请将文件夹ZabbixSendMessageScript下的WeChatMessage.py和wechat.ini放置到zabbix告警脚本目录，一般为/usr/lib/zabbix/alertscripts/
+"""
+
 import sys
 import requests
 import json
@@ -127,10 +133,10 @@ if __name__ == '__main__':
     # 格式化zabbix传过来的数据
     FormedArray = Message.split('@@@')
 
-    #CurrentTime = time.strftime("%Y-%m-%d %X", time.localtime()) + ' '
     if Subject.find('故障发生') > -1:
-        EventID = FormedArray[6]
+        EventID = FormedArray[8]
         Random = int(round(time.time() * 1000))
+        #task_id由zabbix的EventID + @ + 时间戳制成。
         task_id = str(str(EventID) + "@" + str(Random))
         FormedDate = FormedArray[0].replace('.', '/', 3)
         FormedArray[0] = "发生时间：" + FormedDate + ' - '
@@ -138,8 +144,13 @@ if __name__ == '__main__':
         FormedArray[2] = "故障名：" + FormedArray[2] + '\n'
         FormedArray[3] = "<div class=\"highlight\">主机名：" + FormedArray[3] + '</div>'
         FormedArray[4] = "<div class=\"highlight\">主机地址: " + FormedArray[4] + '</div>'
-        FormedArray[5] = "<div class=\"highlight\">故障等级: " + FormedArray[5] + '</div>\n'
-        FormedArray[6] = "<div class=\"gray\">Original problem ID： " + FormedArray[6] + '</div>'
+        FormedArray[5] = "<div class=\"highlight\">故障等级: " + FormedArray[5] + '</div>'
+        ###添加监控项键及监控项值
+        FormedArray[6] = "<div class=\"highlight\">监控项键: " + FormedArray[6] + '</div>'
+        FormedArray[7] = "<div class=\"highlight\">监控项值: " + FormedArray[7] + '</div>\n'
+        ###
+        FormedArray[8] = "<div class=\"gray\">Original problem ID： " + FormedArray[8] + '</div>'
+
         Content = ''
         for data in FormedArray:
             Content = Content + data
@@ -161,9 +172,13 @@ if __name__ == '__main__':
         # UpdateUser=FormedArray[6]
         UpdateContent = FormedArray[7]
         IsAck = FormedArray[8]
-        ProblemID = FormedArray[9]
+        ###添加监控项键及监控项值
+        MonitorKey=FormedArray[9]
+        MonitorValue=FormedArray[10]
+        ###
+        ProblemID = FormedArray[11]
         Content = '故障更新\n>更新时间：<font color=\"comment\">' + FormedDate + ' - ' + UpdateTime + '</font>\n>故障名：<font color=\"warning\">' + ProblemName + '</font>\n>主机名：<font color=\"comment\">' + \
-                  HostName + '</font>\n>主机地址: <font color=\"comment\">' + HostIP + '</font>\n>故障等级: <font color=\"comment\">' + ProblemSev + '</font>\n>更新内容: <font color=\"info\">' + UpdateContent + '</font>\n>是否ACK: <font color=\"warning\">' + IsAck + '</font>\n>Original problem ID：<font color=\"comment\">' + ProblemID + '</font>'
+                  HostName + '</font>\n>主机地址: <font color=\"comment\">' + HostIP + '</font>\n>故障等级: <font color=\"comment\">' + ProblemSev + '</font>\n>更新内容: <font color=\"info\">' + UpdateContent + '</font>\n>是否ACK: <font color=\"warning\">' + IsAck + '</font>\n>监控项键: <font color=\"info\">' + MonitorKey + '</font>\n>监控项值: <font color=\"info\">' + MonitorValue + '</font>\n>Original problem ID：<font color=\"comment\">' + ProblemID + '</font>'
         try:
             SendMarkDownToApp(UserId, Content)
         except Exception as e:
@@ -178,9 +193,13 @@ if __name__ == '__main__':
         HostName = FormedArray[3]
         HostIP = FormedArray[4]
         ProblemSev = FormedArray[5]
-        ProblemID = FormedArray[6]
+        ###添加监控项键及监控项值
+        MonitorKey = FormedArray[6]
+        MonitorValue = FormedArray[7]
+        ###
+        ProblemID = FormedArray[8]
         Content = '<font color=\"info\">故障解决</font>\n>解决时间：<font color=\"info\">' + FormedDate + ' - ' + ResolveTime + '</font>\n>故障名：<font color=\"info\">' + ProblemName + '</font>\n>主机名：<font color=\"info\">' + \
-                  HostName + '</font>\n>主机地址: <font color=\"info\">' + HostIP + '</font>\n>故障等级: <font color=\"info\">' + ProblemSev + '</font>\n>Original problem ID：<font color=\"info\">' + ProblemID + '</font>'
+                  HostName + '</font>\n>主机地址: <font color=\"info\">' + HostIP + '</font>\n>故障等级: <font color=\"info\">' + ProblemSev + '</font>\n>监控项键: <font color=\"info\">' + MonitorKey + '</font>\n>监控项值: <font color=\"info\">' + MonitorValue + '</font>\n>Original problem ID：<font color=\"info\">' + ProblemID + '</font>'
         try:
             SendMarkDownToApp(UserId, Content)
         except Exception as e:
