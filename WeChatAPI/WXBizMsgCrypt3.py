@@ -15,8 +15,7 @@ import struct
 from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
-
-import WeChatAPI.ierror as ierror
+import WeChatAPI.ErrorCode as ierror
 
 
 """
