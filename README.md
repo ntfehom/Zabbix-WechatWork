@@ -13,4 +13,3 @@
 ### 系统所有配置信息在Configure.ini
 
 #### 请将文件夹ZabbixSendMessageScript下的WeChatMessage.py和wechat.ini放置到zabbix告警脚本目录，一般为/usr/lib/zabbix/alertscripts/
-#####  要安装本程序，请参阅管理员手册。另，安装完后，请给用户分发用户手册。
