@@ -1,28 +1,31 @@
 #!/usr/bin/env python3
 # coding:utf-8
+
+"""
+向企业微信发消息的模块
+"""
+
 import requests
 import json
 from Functions.CorpInfo import *
-
-
-
 
 def SendCardMessageByTaskCardToApp(UserId,Subject,Message,task_id):
     '''
     发送任务卡片，UserId,Subject,Message,task_id均为string。
     task_id由zabbix的problem ID + @ + 时间戳制成。详见WeChatMessage.py
+    TODO:本函数的功能已分离至WeChatMessage.py，在整个Flask Web中暂时已无作用，日后将会被删除。
     '''
     GetResponse = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid="+CorpID+"&corpsecret="+CorpSecret,proxies=proxy).json()
     access_token = (GetResponse['access_token'])
-    FormedArray = Message.split('---')
-    print(FormedArray)
-    FormedArray[0] = "发生时间：" + FormedArray[0] + ' '
-    FormedArray[1] = "on " + FormedArray[1] + '\n'
+    FormedArray = Message.split('@@@')
+    FormedDate = FormedArray[0].replace('.', '/', 3)
+    FormedArray[0] = "发生时间：" + FormedDate + ' - '
+    FormedArray[1] = FormedArray[1] + '\n'
     FormedArray[2] = "故障名：" + FormedArray[2] + '\n'
     FormedArray[3] = "<div class=\"highlight\">主机名：" + FormedArray[3] + '</div>'
-    FormedArray[4] = "<div class=\"highlight\>主机IP:" + FormedArray[4] + '</div>'
-    FormedArray[5] = "<div class=\"highlight\>故障等级:" + FormedArray[5] + '</div>\n'
-    FormedArray[6] = "<div class=\"gray\">Original problem ID：" + FormedArray[6] + '</div>'
+    FormedArray[4] = "<div class=\"highlight\">主机地址: " + FormedArray[4] + '</div>'
+    FormedArray[5] = "<div class=\"highlight\">故障等级: " + FormedArray[5] + '</div>\n'
+    FormedArray[6] = "<div class=\"gray\">Original problem ID： " + FormedArray[6] + '</div>'
     Content = ''
     for data in FormedArray:
         Content = Content + data
